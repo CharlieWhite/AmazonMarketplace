@@ -1,0 +1,116 @@
+= AmazonMarketplace (Simple Marketplace Transactions)
+
+== DESCRIPTION:
+
+This gem provides a Rails interface to the Amazon Simple Pay marketplace service.
+
+== SYNOPSIS:
+
+Set up the gem requirement in your environment:
+
+    (in config/environment.rb)
+    
+    config.gem "AmazonMarketplace"
+
+Configure the gem with your Amazon credentials:
+
+    (in config/initializers/AmazonMarketplace.rb)
+    
+    AmazonMarketplace.aws_access_key_id     = 'MYAMAZONACCESSKEYID'
+    AmazonMarketplace.aws_secret_access_key = 'MYAMAZONSECRETACCESSKEY'
+    AmazonMarketplace.account_id            = 'ACCOUNTIDFORAMAZONPAYMENTS'
+
+Then, let Rails know about the AmazonMarketplace::Helpers:
+
+    (potentially in app/controllers/application[_controller].rb or really anywhere else)
+    
+    require 'AmazonMarketplace/rails'
+
+
+=== Generating your Simple Pay forms
+
+Generally, this library will then be used directly from one (or more) of your 
+views.  Depending on the type of Simple Pay service you're using (see 
+AmazonMarketplace::Services), some form values will be required, while others may be 
+optional.  This is done like so:
+
+    <%= AmazonMarketplace_form_for(:standard, {
+      :amount       => 10.95,
+      :description  => "Profit!"
+    }) %>
+    
+    <%= AmazonMarketplace_form_for(:subscription, {
+      :amount                 => 10.95,
+      :description            => "MORE Profit!",
+      :recurring_frequency    => "1 month"
+    }) %>
+
+
+=== Marketplace forms
+
+Amazon Simple Pay Marketplace makes it easy to facilitate payments between
+buyers and sellers, and to charge a fee for the transaction. If you're building
+a marketplace application, your sellers must first agree to the policy that you
+set. You can do this by specifying the AmazonMarketplace::Services::MarketplacePolicy
+service:
+
+    <%= AmazonMarketplace_form_for(:marketplacePolicy, {
+      :max_fixed_fee => 5.00,
+      :max_variable_fee => 5,
+      :return_url => 'http://yourservice.com',
+      :reference_id => '1234567890'
+    }) %>
+
+The user will be prompted to login to their Amazon account and accept the policy
+you propose. After they complete the process, they'll be returned to the return_url
+specified. Amazon will also provide a recipientEmail parameter that will contain
+the seller email here (you may want to craft your return url so that it contains the
+reference_id value and use this to 'acknowledge' a sellers consent and record their
+Amazon recipient email address).
+
+Only once this is done will you be able to offer marketplace checkout options for
+that sellers items:
+
+    <%= AmazonMarketplace_form_for(:marketplace, {
+      :amount                   => 34.95,
+      :description              => "Mutual profit!",
+      :recipient_email          => 'seller@gmail.com',
+      :fixed_marketplace_fee    => 10.00,
+      :variable_marketplace_fee => 5
+    }) %>
+
+
+== REQUIREMENTS:
+
+1. You must have an Amazon Payments <b>business account</b>.
+2. You must know your Amazon Payments <b>account identifier</b> [instructions to come]
+3. You must know your Amazon Web Services <b>access key</b> and <b>secret access key</b>.
+
+== INSTALL:
+
+    sudo gem install AmazonMarketplace
+
+== LICENSE:
+
+(The MIT License)
+
+Copyright (c) 2008 Nathaniel E. Bibler
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

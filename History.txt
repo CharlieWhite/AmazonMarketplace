@@ -1,0 +1,7 @@
+== 0.1.0 2010-1-16
+
+* Initial release
+* Amazon Simple Pay Standard Marketplace Transactions.
+* Derivative Work:
+	* Amazon Simple Pay Gem - git://github.com/nbibler/AmazonMarketplace.git
+	* Amazon sample code - http://developer.amazonwebservices.com/connect/entry.jspa?externalID=3007&categoryID=299 	
